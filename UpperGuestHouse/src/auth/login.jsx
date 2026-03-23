@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
 
+const VALID_EMAIL = "superadmin@gmail.com";
+const VALID_PASSWORD = "12345678";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,11 +13,12 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const msg =
-      "Veuillez ecrire superadmin@gmail.com comme email et 12345678 comme mot de passe";
-    setError(msg);
-    alert(msg);
-    navigate("/dashboard");
+    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+      setError("");
+      navigate("/dashboard");
+    } else {
+      setError("Email ou mot de passe incorrect.");
+    }
   };
 
   return (
@@ -86,7 +90,7 @@ function Login() {
 
             <hr className="my-4" />
 
-            <p className="text-center text-body-secondary small"> 2026 UpperGuestHouse. Tous droits réservés.</p>
+            <p className="text-center text-body-secondary small">© 2026 UpperGuestHouse. Tous droits réservés.</p>
           </div>
         </div>
       </div>

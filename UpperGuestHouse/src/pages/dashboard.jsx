@@ -1,6 +1,5 @@
 import React from "react";
 import Sidebar from "../components/sidebar.jsx";
-import "./dashboard.css";
 
 function Dashboard() {
   return (
