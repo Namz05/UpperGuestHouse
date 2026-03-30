@@ -1,185 +1,167 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/sidebar.jsx";
 
-const ABONNEMENTS = ["BASIC", "PRO", "PREMIUM"];
-const STATUTS = ["Actif", "Inactif"];
+const ABONNEMENTS = ["BASIQUE", "PREMIUM", "ENTERPRISE"];
 
 function AjouterGuesthouse() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const editParam = searchParams.get("edit");
-  const editIndex = editParam !== null ? Number(editParam) : -1;
-  const isEditMode = Number.isInteger(editIndex) && editIndex >= 0;
-
-  const guesthousesData = localStorage.getItem("guesthouses");
-  const guesthouses = guesthousesData ? JSON.parse(guesthousesData) : [];
-  const guesthouseToEdit = isEditMode ? guesthouses[editIndex] : null;
+  const editId = searchParams.get("edit");
+  const isEditMode = !!editId;
 
   const [formData, setFormData] = useState({
-    nom: guesthouseToEdit?.nom ?? "",
-    proprietaire: guesthouseToEdit?.proprietaire ?? "",
-    localisation: guesthouseToEdit?.localisation ?? "",
-    abonnement: guesthouseToEdit?.abonnement ?? "BASIC",
-    statut: guesthouseToEdit?.statut ?? "Actif",
+    nom: "",
+    proprietaire: "",
+    localisation: "",
+    abonnement: "PREMIUM", // Par défaut comme sur l'image
+    telephone: "",
+    email: "",
+    description: "",
+    statut: "Actif",
   });
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((previous) => ({ ...previous, [name]: value }));
+  // Charger les données si on est en mode édition
+  useEffect(() => {
+    if (isEditMode) {
+      const data = localStorage.getItem("guesthouses");
+      if (data) {
+        const guesthouses = JSON.parse(data);
+        const itemToEdit = guesthouses.find((g) => g.id === Number(editId));
+        if (itemToEdit) setFormData(itemToEdit);
+      }
+    }
+  }, [isEditMode, editId]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = localStorage.getItem("guesthouses");
+    let guesthouses = data ? JSON.parse(data) : [];
 
-    const guesthousesData = localStorage.getItem("guesthouses");
-    const guesthouses = guesthousesData ? JSON.parse(guesthousesData) : [];
-
-    const newGuesthouse = {
-      nom: formData.nom.trim(),
-      proprietaire: formData.proprietaire.trim(),
-      localisation: formData.localisation.trim(),
-      abonnement: formData.abonnement,
-      statut: formData.statut,
-    };
-
-    if (isEditMode && guesthouses[editIndex]) {
-      guesthouses[editIndex] = newGuesthouse;
+    if (isEditMode) {
+      // Logique de mise à jour
+      guesthouses = guesthouses.map((g) =>
+        g.id === Number(editId) ? { ...formData, id: Number(editId) } : g
+      );
     } else {
-      guesthouses.push(newGuesthouse);
+      // Logique de création
+      guesthouses.push({ ...formData, id: Date.now() });
     }
-    localStorage.setItem("guesthouses", JSON.stringify(guesthouses));
 
+    localStorage.setItem("guesthouses", JSON.stringify(guesthouses));
+    // Redirection vers la page de liste (vérifie que c'est bien ta route)
     navigate("/guesthouse");
   };
 
   return (
-    <div className="d-flex">
+    <div className="d-flex bg-light min-vh-100">
       <Sidebar />
-
-      <div
-        style={{
-          marginLeft: "280px",
-          width: "calc(100% - 280px)",
-          backgroundColor: "white",
-          minHeight: "100vh",
-        }}
-      >
-        <div className="p-4 border-bottom">
-          <h1 className="h2 mb-2">
-            {isEditMode ? "Modifier une Guesthouse" : "Ajouter une Guesthouse"}
-          </h1>
-          <p className="text-muted mb-0">
-            {isEditMode
-              ? "Modifiez les informations de la guesthouse."
-              : "Renseignez les informations pour creer une nouvelle guesthouse."}
-          </p>
-        </div>
-
+      <div style={{ marginLeft: "280px", width: "calc(100% - 280px)" }}>
+        
+        {/* Header simple et propre */}
         <div className="p-4">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="nom" className="form-label">
-                    NOM DE LA GUESTHOUSE
-                  </label>
-                  <input
-                    id="nom"
-                    name="nom"
-                    type="text"
-                    className="form-control"
-                    value={formData.nom}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+          <form onSubmit={handleSubmit} className="bg-white p-5 rounded-4 shadow-sm mx-auto" style={{ maxWidth: "900px" }}>
+            
+            <h3 className="fw-bold mb-4">
+              {isEditMode ? "Modifier la Guesthouse" : "Ajouter une Guesthouse"}
+            </h3>
 
-                <div className="mb-3">
-                  <label htmlFor="proprietaire" className="form-label">
-                    PROPRIETAIRE
-                  </label>
-                  <input
-                    id="proprietaire"
-                    name="proprietaire"
-                    type="text"
-                    className="form-control"
-                    value={formData.proprietaire}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+            <div className="row g-4">
+              {/* Ligne 1 : Nom et Propriétaire */}
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Nom de la Guesthouse</label>
+                <input 
+                  name="nom" type="text" className="form-control form-control-lg fs-6 shadow-none" 
+                  placeholder="ex: Villa Oasis Cotonou" value={formData.nom} onChange={handleChange} required 
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Nom du Propriétaire</label>
+                <input 
+                  name="proprietaire" type="text" className="form-control form-control-lg fs-6 shadow-none" 
+                  placeholder="ex: Koffi Mensah" value={formData.proprietaire} onChange={handleChange} required 
+                />
+              </div>
 
-                <div className="mb-3">
-                  <label htmlFor="localisation" className="form-label">
-                    LOCALISATION
-                  </label>
-                  <input
-                    id="localisation"
-                    name="localisation"
-                    type="text"
-                    className="form-control"
-                    value={formData.localisation}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="abonnement" className="form-label">
-                    TYPE D'ABONNEMENT
-                  </label>
-                  <select
-                    id="abonnement"
-                    name="abonnement"
-                    className="form-select"
-                    value={formData.abonnement}
-                    onChange={handleChange}
-                    required
-                  >
-                    {ABONNEMENTS.map((abonnement) => (
-                      <option key={abonnement} value={abonnement}>
-                        {abonnement}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label htmlFor="statut" className="form-label">
-                    STATUT
-                  </label>
-                  <select
-                    id="statut"
-                    name="statut"
-                    className="form-select"
-                    value={formData.statut}
-                    onChange={handleChange}
-                    required
-                  >
-                    {STATUTS.map((statut) => (
-                      <option key={statut} value={statut}>
-                        {statut}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
+              {/* Ligne 2 : Localisation et Abonnement */}
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Localisation</label>
+                <select name="localisation" className="form-select form-select-lg fs-6 shadow-none" value={formData.localisation} onChange={handleChange} required>
+                  <option value="">Sélectionner une ville</option>
+                  <option value="Cotonou">Cotonou</option>
+                  <option value="Abomey-Calavi">Abomey-Calavi</option>
+                  <option value="Ouidah">Ouidah</option>
+                  <option value="Porto-Novo">Porto-Novo</option>
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Type d'abonnement</label>
                 <div className="d-flex gap-2">
-                  <button type="submit" className="btn btn-primary">
-                    {isEditMode ? "Mettre a jour" : "Enregistrer"}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary"
-                    onClick={() => navigate("/guesthouse")}
-                  >
-                    Annuler
-                  </button>
+                  {ABONNEMENTS.map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      className={`btn flex-fill py-2 fw-bold border ${
+                        formData.abonnement === type 
+                        ? "border-primary text-primary bg-primary bg-opacity-10" 
+                        : "border-light-subtle text-dark bg-white"
+                      }`}
+                      style={{ fontSize: "0.8rem", transition: "0.3s" }}
+                      onClick={() => setFormData({ ...formData, abonnement: type })}
+                    >
+                      {type}
+                    </button>
+                  ))}
                 </div>
-              </form>
+              </div>
+
+              {/* Section Coordonnées */}
+              <div className="col-12 mt-5">
+                <h5 className="fw-bold mb-4">Coordonnées de Contact</h5>
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Téléphone (WhatsApp)</label>
+                <input 
+                  name="telephone" type="tel" className="form-control form-control-lg fs-6 shadow-none" 
+                  placeholder="+229  01 00 00 00 00" value={formData.telephone} onChange={handleChange} 
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-bold text-dark mb-2">Adresse Email</label>
+                <input 
+                  name="email" type="email" className="form-control form-control-lg fs-6 shadow-none" 
+                  placeholder="contact@etablissement.bj" value={formData.email} onChange={handleChange} 
+                />
+              </div>
+
+              {/* Description */}
+              <div className="col-12 mt-4">
+                <label className="form-label fw-bold text-dark mb-2">Description détaillée</label>
+                <textarea 
+                  name="description" rows="4" className="form-control shadow-none" 
+                  placeholder="Décrivez les atouts de la guesthouse, les équipements disponibles (Piscine, WiFi, Climatisation)..."
+                  value={formData.description} onChange={handleChange}
+                ></textarea>
+              </div>
             </div>
-          </div>
+
+            {/* Actions */}
+            <div className="d-flex justify-content-end gap-3 mt-5">
+              <button type="button" className="btn btn-link text-dark text-decoration-none fw-bold" onClick={() => navigate("/guesthouse")}>
+                Annuler
+              </button>
+              <button type="submit" className="btn btn-primary px-4 py-2 rounded-3 fw-bold" style={{ backgroundColor: "#1d63d2" }}>
+                {isEditMode ? "Mettre à jour les informations" : "Enregistrer la Guesthouse"}
+              </button>
+            </div>
+
+          </form>
         </div>
       </div>
     </div>

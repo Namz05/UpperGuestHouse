@@ -15,7 +15,6 @@ function Sidebar() {
         <span className="fs-4">Management HQ</span>
       </a>
 
-      <hr />
 
       <ul className="nav nav-pills flex-column mb-auto">
         <li className="nav-item">
