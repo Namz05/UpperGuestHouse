@@ -5,7 +5,7 @@ function Sidebar() {
 
   return (
     <div
-      className="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary"
+      className="d-flex flex-column flex-shrink-0 p-3 bg-white border-end"
       style={{ width: "280px", height: "100vh", position: "fixed", left: 0, top: 0 }}
     >
       <a
