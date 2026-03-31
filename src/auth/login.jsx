@@ -8,7 +8,9 @@ function Login() {
   //(useState) sont uiliser pour stocker les valeurs des champs de saisie et les messages d'erreur
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
 
   const handleSubmit = (e) => {
     e.preventDefault();// ceci empeche le rechargement de la page lors de la soumission du formulaire
@@ -58,17 +60,8 @@ function Login() {
                 <i className="bi bi-lock me-2"></i>Mot de passe
               </label>
             </div>
+            {error && <div className="alert alert-danger">{error}</div>}  
 
-
-            {/* <div className="d-flex justify-content-between align-items-center mb-4">
-              <button
-                type="button"
-                className="btn btn-link p-0 text-decoration-none small"
-                onClick={handleForgotPassword}
-              >
-                Mot de passe oublié ?
-              </button>
-            </div> */}
 
 
             <button className="btn btn-primary w-100 py-2 fw-bold rounded-3" type="submit">

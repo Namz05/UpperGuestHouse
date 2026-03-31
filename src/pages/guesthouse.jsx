@@ -5,19 +5,14 @@ import Sidebar from "../components/sidebar.jsx";
 const BADGE_ABONNEMENT = {
   PREMIUM: "text-primary border border-primary",
   BASIC: "text-secondary border border-secondary",
-  ENTERPRISE: "text-warning border border-warning",
-  PRO: "text-success border border-success",
+  PRO: "text-warning border border-warning",
 };
 
 function Guesthouses() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [recherche, setRecherche] = useState("");
-  const [filtreStatut, setFiltreStatut] = useState("Tous");
-  const [filtreAbonnement, setFiltreAbonnement] = useState("Tous");
   const [guesthouses, setGuesthouses] = useState([]);
 
-  // Recharger les données quand on arrive sur la page
   useEffect(() => {
     const data = localStorage.getItem("guesthouses");
     setGuesthouses(data ? JSON.parse(data) : []);
@@ -31,37 +26,33 @@ function Guesthouses() {
     }
   };
 
-  const guesthousesFiltrees = guesthouses.filter((g) => {
-    const matchRecherche =
-      g.nom.toLowerCase().includes(recherche.toLowerCase()) ||
-      g.proprietaire.toLowerCase().includes(recherche.toLowerCase()) ||
-      g.localisation.toLowerCase().includes(recherche.toLowerCase());
-    const matchStatut = filtreStatut === "Tous" || g.statut === filtreStatut;
-    const matchAbonnement = filtreAbonnement === "Tous" || g.abonnement === filtreAbonnement;
-    return matchRecherche && matchStatut && matchAbonnement;
-  });
-
   return (
     <div className="d-flex">
       <Sidebar />
       <div style={{ marginLeft: "280px", width: "calc(100% - 280px)", minHeight: "100vh", backgroundColor: "#f8f9fa" }}>
+
         
-        {/* Top Bar */}
         <div className="bg-white border-bottom px-4 py-2 d-flex justify-content-between align-items-center">
           <div className="input-group" style={{ maxWidth: "360px" }}>
-            <span className="input-group-text bg-white border-end-0"><i className="bi bi-search text-muted"></i></span>
+            <span className="input-group-text bg-white border-end-0">
+              <i className="bi bi-search text-muted"></i>
+            </span>
             <input
               type="text"
               className="form-control border-start-0 ps-0"
               placeholder="Rechercher..."
-              value={recherche}
-              onChange={(e) => setRecherche(e.target.value)}
+              disabled
             />
+            
           </div>
-          {/* Mise à jour du lien vers ta route correcte */}
-          <button className="btn btn-primary d-flex align-items-center gap-2" onClick={() => navigate("/ajouter-guesthouse")}>
+
+          <button
+            className="btn btn-primary d-flex align-items-center gap-2"
+            onClick={() => navigate("/ajouter-guesthouse")}
+          >
             <i className="bi bi-plus-circle"></i> Ajouter une Guesthouse
           </button>
+
         </div>
 
         <div className="p-4">
@@ -70,29 +61,27 @@ function Guesthouses() {
             <p className="text-muted small">Gérez les guesthouses enregistrées sur votre réseau.</p>
           </div>
 
-          {/* Filtres Rapides */}
+          
           <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div className="d-flex gap-2">
-              {["Tous", "Actif", "Inactif"].map((s) => (
+              {["Toutes", "Actif", "Inactif"].map((s) => (
                 <button
                   key={s}
-                  className={`btn btn-sm ${filtreStatut === s ? "btn-primary" : "btn-outline-secondary"}`}
-                  onClick={() => setFiltreStatut(s)}
+                  className={`btn btn-sm ${s === "Toutes" ? "btn-primary" : "btn-outline-secondary"}`}
                 >
-                  {s === "Tous" ? "Toutes" : s}
+                  {s}
                 </button>
               ))}
             </div>
-            <select className="form-select form-select-sm" style={{ width: "200px" }} value={filtreAbonnement} onChange={(e) => setFiltreAbonnement(e.target.value)}>
-              <option value="Tous">Tous les abonnements</option>
-              <option value="BASIC">BASIC</option>
-              <option value="PRO">PRO</option>
-              <option value="PREMIUM">PREMIUM</option>
-              <option value="ENTERPRISE">ENTERPRISE</option>
+            <select className="form-select form-select-sm" style={{ width: "200px" }} disabled>
+              <option>Tous les abonnements</option>
+              <option>BASIC</option>
+              <option>PRO</option>
+              <option>PREMIUM</option>
             </select>
           </div>
 
-          {/* Tableau */}
+          
           <div className="card border-0 shadow-sm">
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0">
@@ -107,14 +96,20 @@ function Guesthouses() {
                   </tr>
                 </thead>
                 <tbody>
-                  {guesthousesFiltrees.length === 0 ? (
-                    <tr><td colSpan="6" className="text-center py-5 text-muted">Aucun résultat</td></tr>
+                  {guesthouses.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="text-center py-5 text-muted">
+                        Aucun résultat
+                      </td>
+                    </tr>
                   ) : (
-                    guesthousesFiltrees.map((g) => (
+                    guesthouses.map((g) => (
                       <tr key={g.id}>
                         <td className="ps-4">
                           <div className="d-flex align-items-center gap-2">
-                            <div className="bg-primary bg-opacity-10 p-2 rounded text-primary"><i className="bi bi-building"></i></div>
+                            <div className="bg-primary bg-opacity-10 p-2 rounded text-primary">
+                              <i className="bi bi-building"></i>
+                            </div>
                             <span className="fw-semibold">{g.nom}</span>
                           </div>
                         </td>
@@ -132,9 +127,18 @@ function Guesthouses() {
                         </td>
                         <td>
                           <div className="d-flex gap-2">
-                            {/* Navigation vers /ajouter-guesthouse avec l'ID en paramètre URL */}
-                            <button className="btn btn-sm btn-light text-primary fw-bold" onClick={() => navigate(`/ajouter-guesthouse?edit=${g.id}`)}>Gérer</button>
-                            <button className="btn btn-sm btn-light text-danger" onClick={() => handleSupprimer(g.id)}><i className="bi bi-trash"></i></button>
+                            <button
+                              className="btn btn-sm btn-light text-primary fw-bold"
+                              onClick={() => navigate(`/ajouter-guesthouse?edit=${g.id}`)}
+                            >
+                              Gérer
+                            </button>
+                            <button
+                              className="btn btn-sm btn-light text-danger"
+                              onClick={() => handleSupprimer(g.id)}
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
                           </div>
                         </td>
                       </tr>

@@ -21,7 +21,7 @@ function Dashboard() {
         </div>
 
         <div className="p-4">
-          {/* Cartes statistiques */}
+
           <div className="row g-4 mb-4">
             <div className="col-md-6 col-lg-3">
               <div className="card border-0 shadow-sm h-100" style={{ backgroundColor: "#e7f1ff" }}>
@@ -71,7 +71,7 @@ function Dashboard() {
                   <div className="d-flex align-items-center justify-content-between">
                     <div>
                       <p className="text-muted mb-2">Revenus</p>
-                      <h3 className="mb-0">2.5M XOF</h3>
+                      <h3 className="mb-0">2.5M FCFA</h3>
                     </div>
                     <i className="bi bi-cash-coin text-warning" style={{ fontSize: "2rem" }}></i>
                   </div>

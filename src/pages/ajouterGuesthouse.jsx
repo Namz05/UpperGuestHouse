@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Sidebar from "../components/sidebar.jsx";
 
-const ABONNEMENTS = ["BASIQUE", "PREMIUM", "ENTERPRISE"];
+const ABONNEMENTS = ["BASIQUE", "PREMIUM", "PRO"];
 
 function AjouterGuesthouse() {
   const navigate = useNavigate();
@@ -14,14 +14,14 @@ function AjouterGuesthouse() {
     nom: "",
     proprietaire: "",
     localisation: "",
-    abonnement: "PREMIUM", // Par défaut comme sur l'image
+    abonnement: "PREMIUM",
     telephone: "",
     email: "",
     description: "",
     statut: "Actif",
   });
 
-  // Charger les données si on est en mode édition
+
   useEffect(() => {
     if (isEditMode) {
       const data = localStorage.getItem("guesthouses");
@@ -54,7 +54,7 @@ function AjouterGuesthouse() {
     }
 
     localStorage.setItem("guesthouses", JSON.stringify(guesthouses));
-    // Redirection vers la page de liste (vérifie que c'est bien ta route)
+
     navigate("/guesthouse");
   };
 
@@ -63,7 +63,7 @@ function AjouterGuesthouse() {
       <Sidebar />
       <div style={{ marginLeft: "280px", width: "calc(100% - 280px)" }}>
         
-        {/* Header simple et propre */}
+
         <div className="p-4">
           <form onSubmit={handleSubmit} className="bg-white p-5 rounded-4 shadow-sm mx-auto" style={{ maxWidth: "900px" }}>
             
@@ -72,7 +72,7 @@ function AjouterGuesthouse() {
             </h3>
 
             <div className="row g-4">
-              {/* Ligne 1 : Nom et Propriétaire */}
+
               <div className="col-md-6">
                 <label className="form-label fw-bold text-dark mb-2">Nom de la Guesthouse</label>
                 <input 
@@ -88,7 +88,7 @@ function AjouterGuesthouse() {
                 />
               </div>
 
-              {/* Ligne 2 : Localisation et Abonnement */}
+
               <div className="col-md-6">
                 <label className="form-label fw-bold text-dark mb-2">Localisation</label>
                 <select name="localisation" className="form-select form-select-lg fs-6 shadow-none" value={formData.localisation} onChange={handleChange} required>
@@ -120,7 +120,7 @@ function AjouterGuesthouse() {
                 </div>
               </div>
 
-              {/* Section Coordonnées */}
+
               <div className="col-12 mt-5">
                 <h5 className="fw-bold mb-4">Coordonnées de Contact</h5>
               </div>
@@ -140,7 +140,7 @@ function AjouterGuesthouse() {
                 />
               </div>
 
-              {/* Description */}
+
               <div className="col-12 mt-4">
                 <label className="form-label fw-bold text-dark mb-2">Description détaillée</label>
                 <textarea 
@@ -151,7 +151,7 @@ function AjouterGuesthouse() {
               </div>
             </div>
 
-            {/* Actions */}
+
             <div className="d-flex justify-content-end gap-3 mt-5">
               <button type="button" className="btn btn-link text-dark text-decoration-none fw-bold" onClick={() => navigate("/guesthouse")}>
                 Annuler
